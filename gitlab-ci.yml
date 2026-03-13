@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 Morisetti Alexandre
+#
+# SPDX-License-Identifier: MIT
+
+image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+variables:
+  UV_CACHE_DIR: ".uv-cache"
+
+before_script:
+  - apt-get update && apt-get install -y git libatomic1
+
+cache:
+  paths:
+    - .uv-cache
+
+stages:
+  - lint
+  - test
+  - deploy
+
+linting:
+  stage: lint
+  script:
+    - uv sync
+    - uv run pre-commit run --all-files
+
+unit_tests:
+  stage: test
+  script:
+    - uv sync
+    - uv run pytest
+
+pages:
+  stage: deploy
+  script:
+    - uv sync
+    - uv run sphinx-build -b html docs/source public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
