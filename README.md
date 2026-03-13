@@ -14,6 +14,12 @@ oberon0-rt run add.wasm add 23 19
 uv run .\make.bat html
 ```
 
+**Run precommit**
+
+```bash
+ pre-commit run --all-files
+```
+
 **bump up the verion**
 
 patch (0.1.0 -> 0.1.1)
